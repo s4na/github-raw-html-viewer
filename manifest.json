@@ -3,8 +3,11 @@
   "name": "GitHub Raw HTML Viewer",
   "version": "1.0.0",
   "description": "View raw HTML files from GitHub as rendered HTML pages",
-  "permissions": ["scripting", "activeTab"],
+  "permissions": ["scripting", "activeTab", "tabs"],
   "host_permissions": ["https://raw.githubusercontent.com/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
   "content_scripts": [
     {
       "matches": ["https://raw.githubusercontent.com/*"],

@@ -1,6 +1,12 @@
 (function () {
-  if (!location.hostname.startsWith('raw.githubusercontent.com')) return;
+  console.log('GitHub Raw HTML Viewer: スクリプトが読み込まれました');
+  
+  if (!location.hostname.startsWith('raw.githubusercontent.com')) {
+    console.log('GitHub Raw HTML Viewer: raw.githubusercontent.comではないため、スキップします');
+    return;
+  }
 
+  console.log('GitHub Raw HTML Viewer: ボタンを作成します');
   const btn = document.createElement('button');
   btn.textContent = 'HTMLプレビュー';
   Object.assign(btn.style, {
@@ -33,20 +39,27 @@
   document.documentElement.appendChild(btn);
 
   btn.addEventListener('click', () => {
+    console.log('GitHub Raw HTML Viewer: ボタンがクリックされました');
+    
     const srcHtml = document.body.innerText;
-
     const baseHref = location.href.replace(/[^/]+$/, '');
-    const htmlWithBase = srcHtml.replace(/<head[^>]*>/i, match => {
-      return `${match}<base href="${baseHref}">`;
+    
+    console.log('GitHub Raw HTML Viewer: HTMLコンテンツを取得しました', {
+      htmlLength: srcHtml.length,
+      baseHref: baseHref
     });
 
-    const blob = new Blob([htmlWithBase], { type: 'text/html; charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    
-    const newWindow = window.open(url, '_blank');
-    
-    setTimeout(() => {
-      URL.revokeObjectURL(url);
-    }, 1000);
+    // バックグラウンドスクリプトにメッセージを送信して新しいタブでHTMLを開く
+    chrome.runtime.sendMessage({
+      action: 'openHtmlPreview',
+      html: srcHtml,
+      baseUrl: baseHref
+    }, response => {
+      if (response && response.success) {
+        console.log('GitHub Raw HTML Viewer: HTMLプレビューが新しいタブで開かれました');
+      } else {
+        console.error('GitHub Raw HTML Viewer: エラーが発生しました', response);
+      }
+    });
   });
 })();
