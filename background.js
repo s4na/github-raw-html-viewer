@@ -20,11 +20,13 @@ ${html}
 </body>
 </html>`;
     
-    // Data URLを使用してHTMLを直接開く（スクリプト実行を許可）
-    const dataUrl = `data:text/html;charset=utf-8,${encodeURIComponent(fullHtml)}`;
+    // 拡張機能のプレビューページを使用してHTMLを表示
+    const previewUrl = chrome.runtime.getURL('preview.html') + 
+      '?html=' + encodeURIComponent(html) + 
+      '&baseUrl=' + encodeURIComponent(baseUrl);
     
     // 新しいタブで開く
-    chrome.tabs.create({ url: dataUrl }, (tab) => {
+    chrome.tabs.create({ url: previewUrl }, (tab) => {
       console.log('Background: 新しいタブを作成しました', tab.id);
     });
     
