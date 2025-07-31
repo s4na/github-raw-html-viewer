@@ -50,10 +50,16 @@
       html: srcHtml,
       baseUrl: baseHref
     }, response => {
+      // chrome.runtime.lastErrorをチェック
+      if (chrome.runtime.lastError) {
+        console.error('GitHub Raw HTML Viewer: メッセージ送信エラー', chrome.runtime.lastError.message);
+        return;
+      }
+      
       if (response && response.success) {
         console.log('GitHub Raw HTML Viewer: HTMLプレビューが新しいタブで開かれました');
       } else {
-        console.error('GitHub Raw HTML Viewer: エラーが発生しました', response);
+        console.error('GitHub Raw HTML Viewer: エラーが発生しました', response || 'レスポンスがありません');
       }
     });
   });
