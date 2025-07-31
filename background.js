@@ -7,8 +7,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       baseUrl: baseUrl
     });
     
-    // HTMLドキュメントを完全に構築
-    const fullHtml = `<!DOCTYPE html>
+    try {
+      // HTMLドキュメントを完全に構築
+      const fullHtml = `<!DOCTYPE html>
 <html>
 <head>
     <base href="${baseUrl}">
@@ -19,16 +20,27 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 ${html}
 </body>
 </html>`;
+      
+      // Data URLを使用（Manifest V3のservice workerではBlob URLが使えないため）
+      const dataUrl = `data:text/html;charset=utf-8,${encodeURIComponent(fullHtml)}`;
+      
+      // 新しいタブで開く
+      chrome.tabs.create({ url: dataUrl }, (tab) => {
+        if (chrome.runtime.lastError) {
+          console.error('Background: タブ作成エラー', chrome.runtime.lastError);
+          sendResponse({ success: false, error: chrome.runtime.lastError.message });
+          return;
+        }
+        
+        console.log('Background: 新しいタブを作成しました', tab.id);
+        sendResponse({ success: true });
+      });
+      
+    } catch (error) {
+      console.error('Background: エラーが発生しました', error);
+      sendResponse({ success: false, error: error.message });
+    }
     
-    // Data URLを使用してHTMLを直接開く（スクリプト実行を許可）
-    const dataUrl = `data:text/html;charset=utf-8,${encodeURIComponent(fullHtml)}`;
-    
-    // 新しいタブで開く
-    chrome.tabs.create({ url: dataUrl }, (tab) => {
-      console.log('Background: 新しいタブを作成しました', tab.id);
-    });
-    
-    sendResponse({ success: true });
+    return true; // 非同期レスポンスのために必要
   }
-  return true;
 });
