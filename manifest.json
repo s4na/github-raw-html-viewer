@@ -2,7 +2,8 @@
   "manifest_version": 3,
   "name": "GitHub Raw HTML Viewer",
   "version": "1.0.0",
-  "description": "View raw HTML files from GitHub as rendered HTML pages",
+  "description": "View raw HTML files from GitHub as rendered HTML pages. Source: https://github.com/s4na/github-raw-html-viewer",
+  "homepage_url": "https://github.com/s4na/github-raw-html-viewer",
   "permissions": ["scripting", "activeTab", "tabs"],
   "host_permissions": ["https://raw.githubusercontent.com/*"],
   "background": {
