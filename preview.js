@@ -8,9 +8,20 @@ if (previewId) {
         const previewData = result[`preview_${previewId}`];
         
         if (previewData && previewData.html) {
-            // iframeにHTMLを設定
+            // Blob URLを作成してiframeのsrcに設定
+            const blob = new Blob([previewData.html], { type: 'text/html;charset=utf-8' });
+            const blobUrl = URL.createObjectURL(blob);
+            
             const iframe = document.getElementById('preview-frame');
-            iframe.srcdoc = previewData.html;
+            iframe.src = blobUrl;
+            
+            // iframeが読み込まれたらBlob URLを解放
+            iframe.onload = () => {
+                // 少し遅延させてから解放（読み込み完了を確実にするため）
+                setTimeout(() => {
+                    URL.revokeObjectURL(blobUrl);
+                }, 1000);
+            };
             
             // 使用済みのデータを削除
             chrome.storage.local.remove([`preview_${previewId}`]);
