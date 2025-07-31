@@ -4,7 +4,13 @@
   "version": "1.0.0",
   "description": "View raw HTML files from GitHub as rendered HTML pages. Source: https://github.com/s4na/github-raw-html-viewer",
   "homepage_url": "https://github.com/s4na/github-raw-html-viewer",
-  "permissions": ["scripting", "activeTab", "tabs"],
+  "permissions": ["scripting", "activeTab", "tabs", "storage"],
+  "web_accessible_resources": [
+    {
+      "resources": ["preview.html", "preview.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
   "host_permissions": ["https://raw.githubusercontent.com/*"],
   "background": {
     "service_worker": "background.js"
