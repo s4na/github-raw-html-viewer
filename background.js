@@ -20,18 +20,12 @@ ${html}
 </body>
 </html>`;
     
-    // Blob URLを作成（ダウンロードではなくブラウザで表示）
-    const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
-    const blobUrl = URL.createObjectURL(blob);
+    // Data URLを使用してHTMLを直接開く（スクリプト実行を許可）
+    const dataUrl = `data:text/html;charset=utf-8,${encodeURIComponent(fullHtml)}`;
     
     // 新しいタブで開く
-    chrome.tabs.create({ url: blobUrl }, (tab) => {
+    chrome.tabs.create({ url: dataUrl }, (tab) => {
       console.log('Background: 新しいタブを作成しました', tab.id);
-      
-      // 30秒後にBlob URLを解放
-      setTimeout(() => {
-        URL.revokeObjectURL(blobUrl);
-      }, 30000);
     });
     
     sendResponse({ success: true });
